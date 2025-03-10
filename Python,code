@@ -3,3 +3,37 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.stats import norm
 
+##European Put Black-Scholes Model:
+# Given parameters
+X0 = 1.33   # Current exchange rate price
+K = 1.33   # Strike of exchange rate
+sigma = 0.1  # Volatility of the underlying asset
+rf = 0.01   # foreign risk-free rate
+r = 0.02   # local risk-free rate
+T_years = 1
+n = 12  # number of periods in a year
+
+def BS_put_price(X0, K, sigma, rf, T, r):
+    # Calculating d1 and d2 and fomrming the valuation of European put with BS formula
+    d1 = (np.log(X0 / K) + (rf - r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))     
+    d2 = d1 - sigma * np.sqrt(T)
+
+    put_price = K * np.exp(-rf * T) * norm.cdf(-d2) - X0 * np.exp(-r * T) * norm.cdf(-d1)
+    return put_price
+
+# Creating a table
+put_prices_table = pd.DataFrame(index=range(1, n+1), columns=["T", "Individual put price European(each for 100 CAD/USD)"])
+
+put_prices_array = np.zeros(n)
+# Calculation for 100 of individual European put price and Populating the table
+for i in range(1, n+1):
+    T = i / n  # Fraction of a year
+    #Convert the cost to the desired units (100 CAD/USD)
+    put_price = 100 * BS_put_price(X0, K, sigma, r, T, rf)
+    
+    put_prices_table.at[i, "T"] = T
+    put_prices_table.at[i, "Individual put price European(each for 100 CAD/USD)"] = put_price
+    put_prices_array[i-1] = put_price
+    
+# Display the table
+print(put_prices_table)
