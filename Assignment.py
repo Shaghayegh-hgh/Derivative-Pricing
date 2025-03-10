@@ -5,8 +5,6 @@
 
 # ### Assignment
 
-# #### Shaghayegh Hossein Ghanemi (11304285)
-
 # In[1]:
 
 
